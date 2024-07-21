@@ -28,7 +28,7 @@ class LoginState extends State<Login> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String? _errorText = '';
+  String _errorText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class LoginState extends State<Login> {
                     color: Colors.black
                 ))
             ),
-            Text('$_errorText',
+            Text(_errorText,
                 style: const TextStyle(
                     color: Colors.red,
                     fontSize: 20
@@ -137,11 +137,11 @@ class CommunitiesList extends StatelessWidget {
                           )
                       ),
                       onPressed: () {
-                        account.currentCommunity = _communities[index][1];
+                        account.currentCommunity = _communities[index];
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ChatsList()
+                                builder: (context) => Community()
                             )
                         );
                       },
@@ -169,6 +169,88 @@ class CommunitiesList extends StatelessWidget {
   }
 }
 
+class Community extends StatelessWidget {
+  const Community({super.key});
+  
+  @override
+  Widget build(BuildContext context){
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(account.currentCommunity[0]),
+          bottom: const TabBar(
+              tabs: [
+                Tab(text: 'Посты'),
+                Tab(text: 'Чаты')
+              ]
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            PostsList(),
+            ChatsList()
+          ]
+        )
+      ),
+    );
+  }
+}
+
+class PostsList extends StatelessWidget {
+  final List<List<String>> _posts = account.getPosts();
+
+  PostsList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: _posts.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+              padding: const EdgeInsets.all(5),
+              child: TextButton(
+                  style: ButtonStyle(
+                      alignment: Alignment.centerLeft,
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)
+                          )
+                      )
+                  ),
+                  onPressed: () {
+                    account.currentPost = _posts[index];
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Post()
+                        )
+                    );
+                  },
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              left: BorderSide(
+                                  width: 10,
+                                  color: Colors.blue
+                              )
+                          )
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Text(_posts[index][0],
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 22
+                          )
+                      )
+                  )
+              )
+          );
+        }
+    );
+  }
+}
+
 class ChatsList extends StatelessWidget {
   final List<List<String>> _chats = account.getChats();
 
@@ -176,8 +258,7 @@ class ChatsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
-        body: ListView.builder(
+    return ListView.builder(
             itemCount: _chats.length,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
@@ -192,11 +273,11 @@ class ChatsList extends StatelessWidget {
                           )
                       ),
                       onPressed: () {
-                        account.currentChat = _chats[index][1];
+                        account.currentChat = _chats[index];
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Chat()
+                                builder: (context) => Chat()
                             )
                         );
                       },
@@ -219,7 +300,23 @@ class ChatsList extends StatelessWidget {
                       )
                   )
               );
-            })
+            }
+            );
+  }
+}
+
+class Post extends StatelessWidget {
+  final List<String> _postInformation = account.getPostInformation();
+
+  Post({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(_postInformation[0])
+      ),
+      body: Text(_postInformation[1])
     );
   }
 }
@@ -239,6 +336,9 @@ class ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(account.currentChat[0]),
+      ),
       body: Column(
         children: [
           Expanded(
