@@ -85,6 +85,13 @@ class LoginState extends State<Login> {
                                 style: TextButton.styleFrom(
                                     foregroundColor: Colors.blue
                                 )
+                              ),
+                              tabBarTheme: TabBarTheme(
+                                indicatorColor: Colors.blue,
+                                labelColor: Colors.blue,
+                                overlayColor: TextButton.styleFrom(
+                                      foregroundColor: Colors.blue
+                                    ).overlayColor
                               )
                             ),
                             home: CommunitiesList()
@@ -141,7 +148,7 @@ class CommunitiesList extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Community()
+                                builder: (context) => const Community()
                             )
                         );
                       },
