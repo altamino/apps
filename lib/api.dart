@@ -1,17 +1,15 @@
 class Account {
   String login = '';
   String password = '';
-  int loginState = 0;
+  int enterState = 0;
   String currentCommunity = '0';
   String currentChat = '0';
 
-  Account(String loginText, String passwordText){
-    login = loginText;
-    password = passwordText;
-    loginState = 200;
+  void enter(String? login, String? password){
+    this.login = login ?? '';
+    this.password = password ?? '';
+    enterState = 200;
   }
-  Account.empty();
-
   List<List<String>> getCommunities() {
     return [['Сообщество 1', '1'], ['Сообщество 2', '2'], ['Сообщество 3', '3']];
   }
@@ -37,8 +35,4 @@ class Account {
       default: return [];
     }
   }
-}
-
-Account login(String? login, String? password){
-  return Account(login ?? '', password ?? '');
 }

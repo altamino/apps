@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:nulla_pc/api.dart' as api;
 
-api.Account account = api.Account.empty();
+api.Account account = api.Account();
+
+void main() {
+  runApp(MaterialApp(
+      theme: ThemeData(
+          textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue
+              )
+          )
+      ),
+      home: const Login()
+  ));
+}
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -58,11 +71,11 @@ class LoginState extends State<Login> {
             ),
             TextButton(
                 onPressed: () {
-                  account = api.login(
+                  account.enter(
                       _loginController.text,
                       _passwordController.text
                   );
-                  if (account.loginState == 200 &&
+                  if (account.enterState == 200 &&
                       _loginController.text != '' &&
                       _passwordController.text != '') {
                     runApp(
@@ -259,17 +272,4 @@ class ChatState extends State<Chat> {
       )
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-      theme: ThemeData(
-          textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue
-              )
-          )
-      ),
-      home: const Login()
-  ));
 }
