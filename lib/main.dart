@@ -55,6 +55,13 @@ class LoginState extends State<Login> {
                 padding: const EdgeInsets.all(20),
                 child: TextField(
                     controller: _loginController,
+                    decoration: const InputDecoration(
+                      hintText: 'Имя пользователя',
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)
+                      )
+                    ),
+                    cursorColor: Colors.black,
                     style: const TextStyle(
                         fontSize: 22
                     )
@@ -64,6 +71,13 @@ class LoginState extends State<Login> {
                 padding: const EdgeInsets.all(20),
                 child: TextField(
                     controller: _passwordController,
+                    decoration: const InputDecoration(
+                        hintText: 'Пароль',
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue)
+                        )
+                    ),
+                    cursorColor: Colors.black,
                     style: const TextStyle(
                         fontSize: 22
                     )
