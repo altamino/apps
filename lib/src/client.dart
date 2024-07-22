@@ -45,6 +45,28 @@ class Client {
     return response.data;
   }
 
+  Future<Map<String, dynamic>> register(
+      String nickname, String email, String password) async {
+    final Map<String, dynamic> data = {
+      "secret": "0 $password",
+      "deviceID": deviceId,
+      "email": email,
+      "clientType": 100,
+      "nickname": nickname,
+      "latitude": 0,
+      "longitude": 0,
+      "address": null,
+      "clientCallbackURL": "narviiapp://relogin",
+      "type": 1,
+      "identity": email
+    };
+
+    final response = await httpClient.post("/g/s/auth/register",
+        data: data);
+
+    return response.data;
+  }
+
   Future<Map<String, dynamic>> subClients(
       [int start = 0, int size = 100]) async {
     final response = await httpClient.get("/g/s/community/joined",

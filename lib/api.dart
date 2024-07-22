@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'amino.dart' as amino;
 
 class Account {
@@ -9,10 +11,17 @@ class Account {
   List<String> currentChat = [];
   List<String> currentPost = [];
 
-  void enter(String? login, String? password){
-    /*this.login = login ?? '';
+  Future<void> enter(String? login, String? password) async {
+    /*debugPrint(login);
+    debugPrint(password);
+    Map<String, dynamic> data = await client.login(login ?? '', password ?? '');
+    debugPrint(data.toString());
+    if (data != null) {
+      enterState = 200;
+    }*/
+    this.login = login ?? '';
     this.password = password ?? '';
-    enterState = 200;*/
+    enterState = 200;
   }
   List<List<String>> getCommunities() {
     return [['Сообщество 1', '1'], ['Сообщество 2', '2'], ['Сообщество 3', '3']];

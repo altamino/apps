@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'ApiException.dart';
 import 'dart:convert' show json;
 
-Map<String, String> base_headers = {
+Map<String, String> baseHeaders = {
     "Accept-Language": "en-US",
     "User-Agent": "Apple iPhone16,2 iOS v16.2 Main/3.13.1",
     "Accept-Encoding": "gzip",
@@ -40,5 +40,5 @@ final requestWrapper = InterceptorsWrapper(
 final customOptions = BaseOptions(
     contentType: Headers.jsonContentType,
     baseUrl: "https://service.aminoapps.com/api/v1",
-    headers: base_headers
+    headers: baseHeaders
   );
