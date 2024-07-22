@@ -7,6 +7,7 @@ class Account {
   String login = '';
   String password = '';
   int enterState = 0;
+  String currentTab = '';
   List<String> currentCommunity = [];
   List<String> currentChat = [];
   List<String> currentPost = [];
@@ -27,12 +28,7 @@ class Account {
     return [['Сообщество 1', '1'], ['Сообщество 2', '2'], ['Сообщество 3', '3']];
   }
   List<List<String>> getChats() {
-    switch(currentCommunity[1]){
-      case '1': return [['Чат 1', '1'], ['Чат 2', '2'], ['Чат 3', '3']];
-      case '2': return [['Чат 4', '4'], ['Чат 5', '5'], ['Чат 6', '6']];
-      case '3': return [['Чат 7', '7'], ['Чат 8', '8'], ['Чат 9', '9']];
-      default: return [];
-    }
+    return [['Чат 1', '1'], ['Чат 2', '2'], ['Чат 3', '3']];
   }
   List<List<String>> getMessages() {
     switch(currentChat[1]){

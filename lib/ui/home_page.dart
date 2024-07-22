@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'widgets/side_menu.dart';
+import 'widgets/chats_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,7 +43,7 @@ class HomePageState extends State<HomePage> {
           child: const TabBarView(
               children: [
                 Text('Сообщества'),
-                Text('Чаты')
+                ChatsList()
               ]
           ),
         )
