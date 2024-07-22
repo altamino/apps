@@ -1,5 +1,10 @@
 # AltAmino Applications
 
+![Date (dd/MM/yyyy)](https://img.shields.io/badge/latest_release_date-01/07/2024-blue)
+![Android Version](https://img.shields.io/badge/android-v10-default) ![Apple Version](https://img.shields.io/badge/apple-v3-blue)
+
+![GitHub Issues](https://img.shields.io/github/issues/altamino/api) ![GitHub Pull Requests](https://img.shields.io/github/issues-pr/altamino/api)
+
 ## Requirements
 
 Apple devices:
