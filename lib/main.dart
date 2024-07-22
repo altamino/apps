@@ -121,6 +121,24 @@ class LoginState extends State<Login> {
   }
 }
 
+class ListDecoration extends StatelessWidget {
+  const ListDecoration({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blue,
+            width: 6
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(5))
+      ),
+      height: 50
+    );
+  }
+}
+
 class CommunitiesList extends StatelessWidget {
   final List<List<String>> _communities = account.getCommunities();
 
@@ -152,26 +170,24 @@ class CommunitiesList extends StatelessWidget {
                             )
                         );
                       },
-                      child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  left: BorderSide(
-                                      width: 10,
-                                      color: Colors.blue
+                      child: Row(
+                          children: [
+                            const ListDecoration(),
+                            Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Text(_communities[index][0],
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 22
                                   )
-                              )
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Text(_communities[index][0],
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22
-                              )
-                          )
+                                ),
+                            )
+                          ]
                       )
                   )
               );
-            })
+            }
+        )
     );
   }
 }
@@ -234,25 +250,22 @@ class PostsList extends StatelessWidget {
                         )
                     );
                   },
-                  child: Container(
-                      decoration: const BoxDecoration(
-                          border: Border(
-                              left: BorderSide(
-                                  width: 10,
-                                  color: Colors.blue
-                              )
-                          )
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: Text(_posts[index][0],
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 22
-                          )
+                  child: Row(
+                          children: [
+                            const ListDecoration(),
+                            Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Text(_posts[index][0],
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 22
+                                  )
+                              ),
+                            )
+                          ]
                       )
                   )
-              )
-          );
+              );
         }
     );
   }
@@ -284,31 +297,28 @@ class ChatsList extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Chat()
+                                builder: (context) => const Chat()
                             )
                         );
                       },
-                      child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  left: BorderSide(
-                                      width: 10,
-                                      color: Colors.blue
-                                  )
-                              )
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Text(_chats[index][0],
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22
-                              )
+                      child: Row(
+                              children: [
+                                const ListDecoration(),
+                                Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Text(_chats[index][0],
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 22
+                                      )
+                                  ),
+                                )
+                              ]
                           )
                       )
-                  )
-              );
+                  );
             }
-            );
+    );
   }
 }
 
