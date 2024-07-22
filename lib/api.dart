@@ -1,4 +1,7 @@
+import 'amino.dart' as amino;
+
 class Account {
+  amino.Client client = amino.Client();
   String login = '';
   String password = '';
   int enterState = 0;
@@ -7,9 +10,9 @@ class Account {
   List<String> currentPost = [];
 
   void enter(String? login, String? password){
-    this.login = login ?? '';
+    /*this.login = login ?? '';
     this.password = password ?? '';
-    enterState = 200;
+    enterState = 200;*/
   }
   List<List<String>> getCommunities() {
     return [['Сообщество 1', '1'], ['Сообщество 2', '2'], ['Сообщество 3', '3']];

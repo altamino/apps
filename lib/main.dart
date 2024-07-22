@@ -216,6 +216,14 @@ class Community extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(account.currentCommunity[0]),
+          actions: [
+            IconButton(
+                onPressed: (){
+                  debugPrint('Drawer');
+                },
+                icon: const Icon(Icons.amp_stories_rounded)
+            )
+          ],
           bottom: const TabBar(
               tabs: [
                 Tab(text: 'Посты'),
@@ -367,40 +375,40 @@ class ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(account.currentChat[0]),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child:ListView.builder(
-              controller: _scrollController,
-              itemCount: messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Text(messages[index][0],
-                  style: const TextStyle(
-                    fontSize: 22
-                  ),
-                );
-              }
+        appBar: AppBar(
+          title: Text(account.currentChat[0]),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+                child:ListView.builder(
+                    controller: _scrollController,
+                    itemCount: messages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Text(messages[index][0],
+                        style: const TextStyle(
+                            fontSize: 22
+                        ),
+                      );
+                    }
+                )
+            ),
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    messages.add(['Сообщение', '1']);
+                  });
+                  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                },
+                child: const Text('Добавить сообщение',
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.black
+                    )
+                )
             )
-          ),
-          TextButton(
-              onPressed: () {
-                setState(() {
-                  messages.add(['Сообщение', '1']);
-                });
-                _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-              },
-              child: const Text('Добавить сообщение',
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.black
-                  )
-              )
-          )
-        ],
-      )
+          ],
+        )
     );
   }
 }
