@@ -3,6 +3,6 @@
 /// More dartdocs go here.
 library;
 
-export 'src/client.dart';
+export 'amino/client.dart';
 
 // TODO: Export any libraries intended for clients of this package.

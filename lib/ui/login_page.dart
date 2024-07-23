@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
+import 'register_page.dart';
 
 import '../main.dart';
 
@@ -21,29 +22,28 @@ class LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
                       color: Colors.black,
                       width: 5
+                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(10))
                   ),
-                  borderRadius: const BorderRadius.all(Radius.circular(10))
-              ),
-              child: const Text('Nulla App',
-                  style: TextStyle(
+                  child: const Text('Nulla App',
+                    style: TextStyle(
                       fontSize: 40
-                  )
-              ),
-            ),
-
-            Padding(
-                padding: const EdgeInsets.all(20),
-                child: TextField(
+                    )
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
                     controller: _loginController,
                     decoration: const InputDecoration(
-                        hintText: 'Имя пользователя',
+                        hintText: 'Почта',
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.blue)
                         )
@@ -52,11 +52,11 @@ class LoginState extends State<Login> {
                     style: const TextStyle(
                         fontSize: 22
                     )
-                )
-            ),
-            Padding(
-                padding: const EdgeInsets.all(20),
-                child: TextField(
+                  )
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
                     controller: _passwordController,
                     decoration: const InputDecoration(
                         hintText: 'Пароль',
@@ -68,19 +68,19 @@ class LoginState extends State<Login> {
                     style: const TextStyle(
                         fontSize: 22
                     )
-                )
-            ),
-            TextButton(
-                onPressed: () async {
-                  await account.enter(
+                  )
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await account.enter(
                       _loginController.text,
                       _passwordController.text
-                  );
-                  debugPrint(account.enterState.toString());
-                  if (account.enterState == 200 &&
+                    );
+                    debugPrint(account.enterState.toString());
+                    if (account.enterState == 200 &&
                       _loginController.text != '' &&
                       _passwordController.text != '') {
-                    runApp(
+                      runApp(
                         MaterialApp(
                             theme: ThemeData(
                                 textButtonTheme: TextButtonThemeData(
@@ -98,18 +98,36 @@ class LoginState extends State<Login> {
                             ),
                             home: const HomePage()
                         )
-                    );
+                      );
 
-                  } else {
-                    setState(() {
-                      _errorText = 'Не введён логин или пароль';
-                    });
-                  }
+                    } else {
+                      setState(() {
+                        _errorText = 'Не введён логин или пароль';
+                      });
+                    }
+                  },
+                  child: const Text('Войти',
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.black
+                      )
+                  )
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegisterPage()
+                      )
+                  );
                 },
-                child: const Text('Войти', style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.black
-                ))
+                child: const Text('Регистрация',
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.black
+                    )
+                )
             ),
             Text(_errorText,
                 style: const TextStyle(

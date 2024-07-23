@@ -39,6 +39,6 @@ final requestWrapper = InterceptorsWrapper(
 
 final customOptions = BaseOptions(
     contentType: Headers.jsonContentType,
-    baseUrl: "https://service.aminoapps.com/api/v1",
+    baseUrl: "https://service.altamino.top/api/v1",
     headers: baseHeaders
   );

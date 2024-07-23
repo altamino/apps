@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'core/generators.dart';
 import 'constants.dart';
 
@@ -44,9 +45,22 @@ class Client {
     httpClient.options.headers["AUID"] = response.data["account"]["uid"];
     return response.data;
   }
+  Future<Map<String, dynamic>> verify(String email, String code) async {
+    final Map<String, dynamic> data = {
+      "validationContext": {
+        "type": 1,
+        "identity": email,
+        "data": {"code": code}
+      },
+      "deviceID": deviceId,
+    };
 
+    final responce = await httpClient.post("/g/s/auth/check-security-validation",
+        data: data);
+    return responce.data;
+  }
   Future<Map<String, dynamic>> register(
-      String nickname, String email, String password) async {
+      String nickname, String email, String password, String verification) async {
     final Map<String, dynamic> data = {
       "secret": "0 $password",
       "deviceID": deviceId,
@@ -57,14 +71,44 @@ class Client {
       "longitude": 0,
       "address": null,
       "clientCallbackURL": "narviiapp://relogin",
+      "validationContext": {
+        "data": {
+          "code": verification
+        },
+        "type": 1,
+        "level": 1,
+        "identity": email
+      },
       "type": 1,
       "identity": email
     };
 
-    final response = await httpClient.post("/g/s/auth/register",
-        data: data);
+    try {
+      final response = await httpClient.post("/g/s/auth/register",
+          data: data);
+      return response.data;
+    }catch (e) {
+      debugPrint(e.toString());
+      return {};
+    }
+  }
 
-    return response.data;
+  Future<Map<String, dynamic>> getValidationCode(String email) async {
+    final Map<String, dynamic> data = {
+      "deviceID": deviceId,
+      "type": 1,
+      "identity": email
+    };
+
+    try {
+      final response = await httpClient.post(
+          "/g/s/auth/request-security-validation",
+          data: data);
+      return response.data;
+    } catch (e) {
+      debugPrint(e.toString());
+      return {};
+    }
   }
 
   Future<Map<String, dynamic>> subClients(
