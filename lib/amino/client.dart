@@ -2,6 +2,10 @@ import 'package:dio/dio.dart';
 import 'core/generators.dart';
 import 'constants.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
+import 'package:mime/mime.dart';
 
 
 class Client {
@@ -112,6 +116,20 @@ class Client {
     };
 
     return post("/g/s/auth/request-security-validation", data);
+  }
+
+  Future<Map<String, dynamic>> createCommuniy() async {
+
+  }
+
+  Future<void> uploaadMedia(String filePath) async {
+    File file = File(filePath);
+    Uint8List data = await file.readAsBytes();
+
+    Digest fileHash = sha1.convert(data);
+    String mimeType = lookupMimeType(filePath) ?? 'image/jpeg';
+
+    post("/g/s/media/upload");
   }
 
   Future<Map<String, dynamic>> subClients(

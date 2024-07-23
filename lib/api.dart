@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 
 import 'amino.dart' as amino;
@@ -52,5 +54,12 @@ class Account {
       case '9': return [['Сообщение 25', '25'], ['Сообщение 26', '26'], ['Сообщение 27', '27']];
       default: return [];
     }
+  }
+  Future<void> createCommunity(String name, String tagLine, ) async {
+
+  }
+  Future<String> uploadMedia(String fileName) async {
+
+
   }
 }
