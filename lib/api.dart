@@ -6,36 +6,35 @@ class Account {
   amino.Client client = amino.Client();
   String login = '';
   String password = '';
-  int enterState = 0;
+  bool enterState = false;
   String currentTab = '';
-  List<String> currentCommunity = [];
+  String currentCommunity = '';
   List<String> currentChat = [];
   List<String> currentPost = [];
 
   Future<void> enter(String? login, String? password) async {
     Map<String, dynamic> data = await client.login(login ?? '', password ?? '');
     debugPrint(data.toString());
-    if (data != null) {
-      enterState = 200;
+    if (data['api:statuscode'] == 0) {
+      enterState = true;
     }
-    /*this.login = login ?? '';
-    this.password = password ?? '';
-    enterState = 200;*/
   }
   Future<void> register(String nickname, String login, String password, String verification) async {
     await client.verify(login, verification);
     Map<String, dynamic> data = await client.register(nickname, login, password, verification);
     debugPrint(data.toString());
-    if (data != null) {
-      enterState = 200;
+    if (data['api:statuscode'] == 0) {
+      enterState = true;
     }
   }
   Future<void> getValidationCode(String email) async {
     Map<String, dynamic> data = await client.getValidationCode(email);
     debugPrint(data.toString());
   }
-  List<List<String>> getCommunities() {
-    return [['Сообщество 1', '1'], ['Сообщество 2', '2'], ['Сообщество 3', '3']];
+  Future<List<List<String>>> getCommunities() async {
+    Map<String, dynamic> data = await client.subClients();
+    debugPrint(data.toString());
+    return [];
   }
   List<List<String>> getChats() {
     return [['Чат 1', '1'], ['Чат 2', '2'], ['Чат 3', '3']];

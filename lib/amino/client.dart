@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'core/generators.dart';
 import 'constants.dart';
+import 'dart:convert';
+
 
 class Client {
   final httpClient = Dio();
@@ -27,6 +28,29 @@ class Client {
     return _singleton.comId;
   }
 
+  Future<Map<String, dynamic>> post(String url, Map<String, dynamic> data) async {
+    try {
+      final response = await httpClient.post(
+          url,
+          data: data
+      );
+      return response.data;
+    } catch(e) {
+      return json.decode(e.toString());
+    }
+  }
+  Future<Map<String, dynamic>> get(String url, Map<String, dynamic> queryData) async {
+    try {
+      final response = await httpClient.get(
+          url,
+          queryParameters: queryData
+      );
+      return response.data;
+    } catch(e) {
+      return json.decode(e.toString());
+    }
+  }
+
   Future<Map<String, dynamic>> login(String email, String password) async {
     final Map<String, dynamic> data = {
       "email": email,
@@ -36,14 +60,11 @@ class Client {
       "deviceID": deviceId
     };
 
-    final response = await httpClient.post(
-      "/g/s/auth/login",
-      data: data,
-    );
+    final responseData = await post("/g/s/auth/login", data);
 
-    httpClient.options.headers["NDCAUTH"] = "sid=${response.data["sid"]}";
-    httpClient.options.headers["AUID"] = response.data["account"]["uid"];
-    return response.data;
+    httpClient.options.headers["NDCAUTH"] = "sid=${responseData["sid"]}";
+    httpClient.options.headers["AUID"] = responseData["account"]["uid"];
+    return responseData;
   }
   Future<Map<String, dynamic>> verify(String email, String code) async {
     final Map<String, dynamic> data = {
@@ -54,10 +75,7 @@ class Client {
       },
       "deviceID": deviceId,
     };
-
-    final responce = await httpClient.post("/g/s/auth/check-security-validation",
-        data: data);
-    return responce.data;
+    return await post("/g/s/auth/check-security-validation", data);
   }
   Future<Map<String, dynamic>> register(
       String nickname, String email, String password, String verification) async {
@@ -83,14 +101,7 @@ class Client {
       "identity": email
     };
 
-    try {
-      final response = await httpClient.post("/g/s/auth/register",
-          data: data);
-      return response.data;
-    }catch (e) {
-      debugPrint(e.toString());
-      return {};
-    }
+    return await post("/g/s/auth/register", data);
   }
 
   Future<Map<String, dynamic>> getValidationCode(String email) async {
@@ -100,27 +111,15 @@ class Client {
       "identity": email
     };
 
-    try {
-      final response = await httpClient.post(
-          "/g/s/auth/request-security-validation",
-          data: data);
-      return response.data;
-    } catch (e) {
-      debugPrint(e.toString());
-      return {};
-    }
+    return post("/g/s/auth/request-security-validation", data);
   }
 
   Future<Map<String, dynamic>> subClients(
       [int start = 0, int size = 100]) async {
-    final response = await httpClient.get("/g/s/community/joined",
-        queryParameters: {"start": start, "size": size});
-    return response.data;
+    return await get("/g/s/community/joined", {"start": start, "size": size});
   }
 
   Future<Map<String, dynamic>> getFromCode(String code) async {
-    final response = await httpClient
-        .get("/g/s/link-resolution", queryParameters: {"q": code});
-    return response.data["linkInfoV2"]["extensions"]["linkInfo"];
+    return await get("/g/s/link-resolution", {"q": code});
   }
 }

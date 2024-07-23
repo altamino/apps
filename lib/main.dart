@@ -6,8 +6,6 @@ import 'ui/login_page.dart';
 
 api.Account account = api.Account();
 
-Exchanger exchanger = Exchanger();
-
 void main() {
   runApp(MaterialApp(
       theme: ThemeData(
@@ -19,11 +17,6 @@ void main() {
       ),
       home: const Login()
   ));
-}
-
-class Exchanger {
-  Function onPressed = () => null;
-  List<List<String>> information = [];
 }
 
 class Chat extends StatefulWidget {

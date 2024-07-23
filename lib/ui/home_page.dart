@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'widgets/side_menu.dart';
 import 'widgets/chats_list.dart';
 
+import '../main.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -11,6 +13,26 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  List<Widget> createButtons() {
+    List<Widget> widgets = [];
+    Future<List<List<String>>> communityInformation = account.getCommunities();
+    communityInformation.then((value) {
+      for (int i = 0; i < value.length; i++){
+        widgets.add(
+            IconButton(
+                onPressed: () {
+                  debugPrint('123');
+                },
+                icon: const Icon(Icons.directions_boat)
+            )
+        );
+      }
+    });
+
+    debugPrint(widgets.toString());
+    return widgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -20,29 +42,23 @@ class HomePageState extends State<HomePage> {
           title: const Text('Nulla'),
           bottom: const TabBar(
               tabs: [
-                Tab(text: 'Сообщества'),
+                Tab(text: 'Посты'),
                 Tab(text: 'Чаты')
               ]
           ),
         ),
         body: SideMenu(
-          menuItems: [
+          menuItems: createButtons() + [
             IconButton(
-              onPressed: (){
-               debugPrint('123');
-              },
-              icon: const Icon(Icons.co2)
-            ),
-            IconButton(
-                onPressed: (){
-                  debugPrint('124');
+                onPressed: () {
+                  debugPrint('123');
                 },
-                icon: const Icon(Icons.dangerous)
-            ),
+                icon: const Icon(Icons.add)
+            )
           ],
           child: const TabBarView(
               children: [
-                Text('Сообщества'),
+                Text('Посты'),
                 ChatsList()
               ]
           ),

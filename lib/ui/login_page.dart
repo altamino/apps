@@ -71,40 +71,40 @@ class LoginState extends State<Login> {
                   )
                 ),
                 TextButton(
-                  onPressed: () async {
-                    await account.enter(
+                  onPressed: () {
+                    Future<void> awaitResult = account.enter(
                       _loginController.text,
                       _passwordController.text
                     );
-                    debugPrint(account.enterState.toString());
-                    if (account.enterState == 200 &&
-                      _loginController.text != '' &&
-                      _passwordController.text != '') {
-                      runApp(
-                        MaterialApp(
-                            theme: ThemeData(
-                                textButtonTheme: TextButtonThemeData(
-                                    style: TextButton.styleFrom(
-                                        foregroundColor: Colors.blue
+                    awaitResult.then((value) {
+                      debugPrint(account.enterState.toString());
+                      if (account.enterState) {
+                        runApp(
+                            MaterialApp(
+                                theme: ThemeData(
+                                    textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: Colors.blue
+                                        )
+                                    ),
+                                    tabBarTheme: TabBarTheme(
+                                        indicatorColor: Colors.blue,
+                                        labelColor: Colors.blue,
+                                        overlayColor: TextButton.styleFrom(
+                                            foregroundColor: Colors.blue
+                                        ).overlayColor
                                     )
                                 ),
-                                tabBarTheme: TabBarTheme(
-                                    indicatorColor: Colors.blue,
-                                    labelColor: Colors.blue,
-                                    overlayColor: TextButton.styleFrom(
-                                        foregroundColor: Colors.blue
-                                    ).overlayColor
-                                )
-                            ),
-                            home: const HomePage()
-                        )
-                      );
+                                home: const HomePage()
+                            )
+                        );
 
-                    } else {
-                      setState(() {
-                        _errorText = 'Не введён логин или пароль';
-                      });
-                    }
+                      } else {
+                        setState(() {
+                          _errorText = 'Не введён логин или пароль';
+                        });
+                      }
+                    });
                   },
                   child: const Text('Войти',
                       style: TextStyle(

@@ -85,8 +85,8 @@ class RegisterPage extends StatelessWidget{
                   )
               ),
               TextButton(
-                  onPressed: () async {
-                    await account.getValidationCode(
+                  onPressed: () {
+                    account.getValidationCode(
                         _loginController.text
                     );
                   },
@@ -98,18 +98,18 @@ class RegisterPage extends StatelessWidget{
                   )
               ),
               TextButton(
-                  onPressed: () async {
-                    await account.register(
+                  onPressed: () {
+                    Future<void> registerStatus = account.register(
                         _nicknameController.text,
                         _loginController.text,
                         _passwordController.text,
                         _verificationController.text,
                     );
-                    debugPrint(account.enterState.toString());
-                    if (account.enterState == 200) {
-                      Navigator.pop(context);
-                      runApp(
-                          MaterialApp(
+                    registerStatus.then( (value) {
+                        if (account.enterState) {
+                          Navigator.pop(context);
+                          runApp(
+                            MaterialApp(
                               theme: ThemeData(
                                   textButtonTheme: TextButtonThemeData(
                                       style: TextButton.styleFrom(
@@ -126,8 +126,9 @@ class RegisterPage extends StatelessWidget{
                               ),
                               home: const HomePage()
                           )
-                      );
-                    }
+                        );
+                      }
+                    });
                   },
                   child: const Text('Регистрация',
                       style: TextStyle(
