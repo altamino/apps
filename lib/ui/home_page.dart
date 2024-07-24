@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'widgets/side_menu.dart';
 import 'widgets/chats_list.dart';
+import 'create_chat_page.dart';
 
 import '../main.dart';
 
@@ -40,6 +41,21 @@ class HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Nulla'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) {
+                            return CreateChatPage();
+                          }
+                      )
+                  );
+                },
+                icon: const Icon(Icons.add)
+            )
+          ],
           bottom: const TabBar(
               tabs: [
                 Tab(text: 'Посты'),
@@ -51,7 +67,7 @@ class HomePageState extends State<HomePage> {
           menuItems: createButtons() + [
             IconButton(
                 onPressed: () {
-                  debugPrint('123');
+                  debugPrint('New Community');
                 },
                 icon: const Icon(Icons.add)
             )

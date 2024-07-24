@@ -1,4 +1,4 @@
-
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -39,27 +39,34 @@ class Account {
     return [];
   }
   List<List<String>> getChats() {
-    return [['Чат 1', '1'], ['Чат 2', '2'], ['Чат 3', '3']];
+    Map<String, dynamic> data = {};
+    client.getChats().then((value) {
+      data = value;
+    });
+    debugPrint(data['threadList']);
+    return data['threadList'] ?? [];
   }
-  List<List<String>> getMessages() {
-    switch(currentChat[1]){
-      case '1': return [['Сообщение 1', '1'], ['Сообщение 2', '2'], ['Сообщение 3', '3']];
-      case '2': return [['Сообщение 4', '4'], ['Сообщение 5', '5'], ['Сообщение 6', '6']];
-      case '3': return [['Сообщение 7', '7'], ['Сообщение 8', '8'], ['Сообщение 9', '9']];
-      case '4': return [['Сообщение 10', '10'], ['Сообщение 11', '11'], ['Сообщение 12', '12']];
-      case '5': return [['Сообщение 13', '13'], ['Сообщение 14', '14'], ['Сообщение 15', '15']];
-      case '6': return [['Сообщение 16', '16'], ['Сообщение 17', '17'], ['Сообщение 18', '18']];
-      case '7': return [['Сообщение 19', '19'], ['Сообщение 20', '20'], ['Сообщение 21', '21']];
-      case '8': return [['Сообщение 22', '22'], ['Сообщение 23', '23'], ['Сообщение 24', '24']];
-      case '9': return [['Сообщение 25', '25'], ['Сообщение 26', '26'], ['Сообщение 27', '27']];
-      default: return [];
-    }
+  List<List<String>> getMessages(){
+    return [];
+    //TODO: create function
   }
-  Future<void> createCommunity(String name, String tagLine, ) async {
-
+  Future<void> createCommunity(
+      String name,
+      String tagLine,
+      String iconPath,
+      String themeColor,
+      [int joinType = 0, String primaryLanguage = 'en']) async {
+    dynamic aminoPath = await client.uploadMedia(iconPath);
+    // TODO: add functionality
   }
-  Future<String> uploadMedia(String fileName) async {
+  Future<Map<String, dynamic>> getUserInfo() async {
+    Map<String, dynamic> data = await client.getUserInfo();
+    debugPrint(data.toString());
+    return data;
+  }
 
-
+  Future<void> createChat(String title) async {
+    Map<String, dynamic> data = await client.createChat(title);
+    debugPrint(data.toString());
   }
 }
