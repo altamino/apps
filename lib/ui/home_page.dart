@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nulla_pc/amino/client.dart';
 
 import 'widgets/side_menu.dart';
 import 'widgets/chats_list.dart';
-
-import '../main.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,23 +12,29 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  List<Widget> createButtons() {
-    List<Widget> widgets = [];
-    Future<List<List<String>>> communityInformation = account.getCommunities();
-    communityInformation.then((value) {
-      for (int i = 0; i < value.length; i++){
-        widgets.add(
-            IconButton(
-                onPressed: () {
-                  debugPrint('123');
-                },
-                icon: const Icon(Icons.directions_boat)
-            )
-        );
-      }
-    });
+  late Future<List<Widget>> _buttonsFuture;
 
-    debugPrint(widgets.toString());
+  @override
+  void initState() {
+    super.initState();
+    _buttonsFuture = _createButtons();
+  }
+
+  Future<List<Widget>> _createButtons() async {
+    Client client = Client();
+    List<Widget> widgets = [];
+    Map<String, dynamic> communityInformation = await client.subClients();
+    debugPrint(communityInformation.toString());
+    for (int i = 0; i < communityInformation.length; i++) {
+      widgets.add(
+        IconButton(
+          onPressed: () {
+            debugPrint('Community button pressed');
+          },
+          icon: const Icon(Icons.directions_boat),
+        ),
+      );
+    }
     return widgets;
   }
 
@@ -41,30 +46,41 @@ class HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: const Text('Nulla'),
           bottom: const TabBar(
-              tabs: [
-                Tab(text: 'Посты'),
-                Tab(text: 'Чаты')
-              ]
+            tabs: [
+              Tab(text: 'Посты'),
+              Tab(text: 'Чаты'),
+            ],
           ),
         ),
-        body: SideMenu(
-          menuItems: createButtons() + [
-            IconButton(
-                onPressed: () {
-                  debugPrint('123');
-                },
-                icon: const Icon(Icons.add)
-            )
-          ],
-          child: const TabBarView(
-              children: [
-                Text('Посты'),
-                ChatsList()
-              ]
-          ),
-        )
+        body: FutureBuilder<List<Widget>>(
+          future: _buttonsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Error loading communities'));
+            } else {
+              List<Widget> buttons = snapshot.data ?? [];
+              return SideMenu(
+                menuItems: buttons + [
+                  IconButton(
+                    onPressed: () {
+                      debugPrint('Add button pressed');
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                ],
+                child: const TabBarView(
+                  children: [
+                    Center(child: Text('Посты')),
+                    ChatsList(),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
       ),
-
     );
   }
 }

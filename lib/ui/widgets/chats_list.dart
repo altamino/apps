@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nulla_pc/ui/widgets/chat.dart';
 
 import 'list_decoration.dart';
 

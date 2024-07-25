@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:nulla_pc/amino/client.dart';
 
 import 'home_page.dart';
 import 'register_page.dart';
 
-import '../main.dart';
-
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  LoginState createState() => LoginState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class LoginState extends State<Login> {
-  final TextEditingController _loginController = TextEditingController();
+class LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   String _errorText = '';
@@ -21,122 +20,120 @@ class LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 5
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(10))
-                  ),
-                  child: const Text('Nulla App',
-                    style: TextStyle(
-                      fontSize: 40
-                    )
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextField(
-                    controller: _loginController,
-                    decoration: const InputDecoration(
-                        hintText: 'Почта',
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue)
-                        )
-                    ),
-                    cursorColor: Colors.black,
-                    style: const TextStyle(
-                        fontSize: 22
-                    )
-                  )
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                        hintText: 'Пароль',
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue)
-                        )
-                    ),
-                    cursorColor: Colors.black,
-                    style: const TextStyle(
-                        fontSize: 22
-                    )
-                  )
-                ),
-                TextButton(
-                  onPressed: () {
-                    Future<void> awaitResult = account.enter(
-                      _loginController.text,
-                      _passwordController.text
-                    );
-                    awaitResult.then((value) {
-                      debugPrint(account.enterState.toString());
-                      if (account.enterState) {
-                        runApp(
-                            MaterialApp(
-                                theme: ThemeData(
-                                    textButtonTheme: TextButtonThemeData(
-                                        style: TextButton.styleFrom(
-                                            foregroundColor: Colors.blue
-                                        )
-                                    ),
-                                    tabBarTheme: TabBarTheme(
-                                        indicatorColor: Colors.blue,
-                                        labelColor: Colors.blue,
-                                        overlayColor: TextButton.styleFrom(
-                                            foregroundColor: Colors.blue
-                                        ).overlayColor
-                                    )
-                                ),
-                                home: const HomePage()
-                            )
-                        );
-
-                      } else {
-                        setState(() {
-                          _errorText = 'Не введён логин или пароль';
-                        });
-                      }
-                    });
-                  },
-                  child: const Text('Войти',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.black
-                      )
-                  )
-            ),
-            TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RegisterPage()
-                      )
-                  );
-                },
-                child: const Text('Регистрация',
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.black
-                    )
-                )
-            ),
-            Text(_errorText,
-                style: const TextStyle(
-                    color: Colors.red,
-                    fontSize: 20
-                )
-            )
-          ]
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildAppLogo(),
+            const SizedBox(height: 40),
+            _buildEmailField(),
+            const SizedBox(height: 20),
+            _buildPasswordField(),
+            const SizedBox(height: 30),
+            _buildLoginButton(),
+            const SizedBox(height: 10),
+            _buildRegisterButton(),
+            const SizedBox(height: 20),
+            _buildErrorText(),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _buildAppLogo() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 5),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(10),
+        child: Text(
+          'Nulla App',
+          style: TextStyle(fontSize: 40),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextField(
+      controller: _emailController,
+      decoration: const InputDecoration(
+        hintText: 'Почта',
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+      ),
+      cursorColor: Colors.black,
+      style: const TextStyle(fontSize: 22),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextField(
+      controller: _passwordController,
+      obscureText: true,
+      decoration: const InputDecoration(
+        hintText: 'Пароль',
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+      ),
+      cursorColor: Colors.black,
+      style: const TextStyle(fontSize: 22),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return ElevatedButton(
+      onPressed: _handleLogin,
+      child: const Text('Войти', style: TextStyle(fontSize: 22)),
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return TextButton(
+      onPressed: () => _navigateToRegister(),
+      child: const Text('Регистрация', style: TextStyle(fontSize: 22)),
+    );
+  }
+
+  Widget _buildErrorText() {
+    return Text(
+      _errorText,
+      style: const TextStyle(color: Colors.red, fontSize: 20),
+    );
+  }
+
+  void _handleLogin() async {
+    try {
+      Client client = Client();
+      await client.login(_emailController.text, _passwordController.text);
+      _navigateToHome();
+    } catch (e) {
+      _showError('Произошла ошибка при входе');
+    }
+  }
+
+  void _navigateToHome() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  }
+
+  void _navigateToRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RegisterPage()),
+    );
+  }
+
+  void _showError(String message) {
+    setState(() {
+      _errorText = message;
+    });
   }
 }

@@ -104,8 +104,11 @@ class Client {
       "type": 1,
       "identity": email
     };
-
-    return await post("/g/s/auth/register", data);
+    
+    final response = await post("/g/s/auth/register", data);
+    httpClient.options.headers["NDCAUTH"] = "sid=${response["sid"]}";
+    httpClient.options.headers["AUID"] = response["account"]["uid"];
+    return response;
   }
 
   Future<Map<String, dynamic>> getValidationCode(String email) async {
@@ -114,30 +117,47 @@ class Client {
       "type": 1,
       "identity": email
     };
-
-    return post("/g/s/auth/request-security-validation", data);
+    
+    return await post("/g/s/auth/request-security-validation", data);
   }
 
-  Future<Map<String, dynamic>> createCommuniy() async {
+  // Future<Map<String, dynamic>> createCommuniy() async {
+    
+  // }
 
-  }
-
-  Future<void> uploaadMedia(String filePath) async {
+  Future<Map<String, dynamic>> uploadMedia(String filePath) async {
     File file = File(filePath);
     Uint8List data = await file.readAsBytes();
 
     Digest fileHash = sha1.convert(data);
     String mimeType = lookupMimeType(filePath) ?? 'image/jpeg';
 
-    post("/g/s/media/upload");
+    return await post("/g/s/media/upload", {});
   }
 
-  Future<Map<String, dynamic>> subClients(
-      [int start = 0, int size = 100]) async {
-    return await get("/g/s/community/joined", {"start": start, "size": size});
+  Future<Map<String, dynamic>> subClients() async {
+    return await get("/g/s/community/joined", {"start": 0, "size": 100});
   }
 
   Future<Map<String, dynamic>> getFromCode(String code) async {
     return await get("/g/s/link-resolution", {"q": code});
   }
+
+  Future<Map<String, dynamic>> getChatMessages(String chatId, [int start = 0, int size = 100]) async {
+    final String com = comId as bool ? "/g" : "/x$comId";
+    return await get(
+      "$com/s/chat/thread/$chatId/message",
+      {"v": 2, "pagingType": "t", "start": start, "size": size}
+    );
+  }
+
+  Future<Map<String, dynamic>> getComInfo(int comId) async {
+    return await get("/g/s-x$comId/community/info", {});
+  }
+
+  Future<Map<String, dynamic>> getChatThreads([int start = 0, int size = 100]) async {
+    final String com = comId as bool ? "/g" : "/x$comId";
+    return await get("$com/s/chat/thread", {"type": "joined-me", "start": start, "size": size});
+  }
+
 }
