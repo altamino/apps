@@ -18,7 +18,7 @@ class ChatState extends State<Chat> {
     return Scaffold(
         appBar: AppBar(
           // title: Text(account.currentChat[0]),
-          title: Text("test")
+          title: const Text("test")
         ),
         body: Column(
           children: [
@@ -27,8 +27,8 @@ class ChatState extends State<Chat> {
                     controller: _scrollController,
                     itemCount: 0,
                     itemBuilder: (BuildContext context, int index) {
-                      return Text("test",
-                        style: const TextStyle(
+                      return const Text("test",
+                        style: TextStyle(
                             fontSize: 22
                         ),
                       );

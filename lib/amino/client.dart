@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 import 'core/generators.dart';
 import 'constants.dart';
@@ -32,18 +33,19 @@ class Client {
     return _singleton.comId;
   }
 
-  Future<Map<String, dynamic>> post(String url, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> post(String url,  {dynamic data, Map<String, dynamic>? headers}) async {
     try {
       final response = await httpClient.post(
           url,
-          data: data
+          data: data,
+          options: Options(headers: headers)
       );
       return response.data;
     } catch(e) {
       return json.decode(e.toString());
     }
   }
-  Future<Map<String, dynamic>> get(String url, Map<String, dynamic> queryData) async {
+  Future<Map<String, dynamic>> get(String url, {Map<String, dynamic>? queryData, Map<String, dynamic>? headers}) async {
     try {
       final response = await httpClient.get(
           url,
@@ -55,7 +57,7 @@ class Client {
     }
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  dynamic login(String email, String password) async {
     final Map<String, dynamic> data = {
       "email": email,
       "secret": "0 $password",
@@ -64,13 +66,13 @@ class Client {
       "deviceID": deviceId
     };
 
-    final responseData = await post("/g/s/auth/login", data);
+    final responseData = await post("/g/s/auth/login", data: data);
 
     httpClient.options.headers["NDCAUTH"] = "sid=${responseData["sid"]}";
     httpClient.options.headers["AUID"] = responseData["account"]["uid"];
     return responseData;
   }
-  Future<Map<String, dynamic>> verify(String email, String code) async {
+  dynamic verify(String email, String code) async {
     final Map<String, dynamic> data = {
       "validationContext": {
         "type": 1,
@@ -79,9 +81,9 @@ class Client {
       },
       "deviceID": deviceId,
     };
-    return await post("/g/s/auth/check-security-validation", data);
+    return await post("/g/s/auth/check-security-validation", data: data);
   }
-  Future<Map<String, dynamic>> register(
+  dynamic register(
       String nickname, String email, String password, String verification) async {
     final Map<String, dynamic> data = {
       "secret": "0 $password",
@@ -105,7 +107,7 @@ class Client {
       "identity": email
     };
     
-    final response = await post("/g/s/auth/register", data);
+    final response = await post("/g/s/auth/register", data:data);
     httpClient.options.headers["NDCAUTH"] = "sid=${response["sid"]}";
     httpClient.options.headers["AUID"] = response["account"]["uid"];
     return response;
@@ -118,7 +120,7 @@ class Client {
       "identity": email
     };
     
-    return await post("/g/s/auth/request-security-validation", data);
+    return await post("/g/s/auth/request-security-validation", data: data);
   }
 
   // Future<Map<String, dynamic>> createCommuniy() async {
@@ -132,32 +134,57 @@ class Client {
     Digest fileHash = sha1.convert(data);
     String mimeType = lookupMimeType(filePath) ?? 'image/jpeg';
 
-    return await post("/g/s/media/upload", {});
+    return await post("/g/s/media/upload");
   }
 
   Future<Map<String, dynamic>> subClients() async {
-    return await get("/g/s/community/joined", {"start": 0, "size": 100});
+    return await get("/g/s/community/joined", queryData: {"start": 0, "size": 100});
   }
 
   Future<Map<String, dynamic>> getFromCode(String code) async {
-    return await get("/g/s/link-resolution", {"q": code});
+    return await get("/g/s/link-resolution", queryData: {"q": code});
+  }
+
+  Future<Map<String, dynamic>> getChats({int start = 0, int size = 100}) async{
+    Map<String, dynamic> data = {
+      "start": start,
+      "size": size,
+      "type": "joined-me"
+    };
+    return await get("/g/s/chat/thread", queryData: data);
+  }
+
+  Future<Map<String, dynamic>> getUserInfo() async {
+    return await get("/g/s/account");
+  }
+
+  Future<Map<String, dynamic>> createChat(String title) async {
+    Map<String, dynamic> data = {
+      "title": title,
+      "inviteeUids": [],
+      "initialMessageContent": 'Чат создане',
+      "content": null,
+      "type": 2,
+      "publishToGlobal": true
+    };
+    return await post("/g/s/chat/thread", data: data);
   }
 
   Future<Map<String, dynamic>> getChatMessages(String chatId, [int start = 0, int size = 100]) async {
     final String com = comId as bool ? "/g" : "/x$comId";
     return await get(
       "$com/s/chat/thread/$chatId/message",
-      {"v": 2, "pagingType": "t", "start": start, "size": size}
+      queryData: {"v": 2, "pagingType": "t", "start": start, "size": size}
     );
   }
 
   Future<Map<String, dynamic>> getComInfo(int comId) async {
-    return await get("/g/s-x$comId/community/info", {});
+    return await get("/g/s-x$comId/community/info");
   }
 
   Future<Map<String, dynamic>> getChatThreads([int start = 0, int size = 100]) async {
     final String com = comId as bool ? "/g" : "/x$comId";
-    return await get("$com/s/chat/thread", {"type": "joined-me", "start": start, "size": size});
+    return await get("$com/s/chat/thread", queryData: {"type": "joined-me", "start": start, "size": size});
   }
 
 }
