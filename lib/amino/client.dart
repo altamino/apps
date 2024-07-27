@@ -188,15 +188,15 @@ class Client {
     return responceData;
   }
 
-  Future<List<String>> getMessages([int start = 0, int size = 100]) async {
+  Future<Map<String, List<String>>> getMessages([int start = 0, int size = 100]) async {
     Map<String, dynamic> responceData = await get(
         "/g/s/chat/thread/$chatId/message",
         queryData: {'v': 2, "pagingType": "t", "start": start, "size": size}
     );
     List<dynamic> forData = responceData['messageList'];
-    List<String> returnData = [];
+    Map<String, List<String>> returnData = {};
     for (int i = 0; i < forData.length; i++) {
-      returnData.add(forData[i]['content'] ?? '');
+      returnData[forData[i]['messageId']] = [forData[i]['author']['nickname'], forData[i]['content'] ?? ''];
     }
     return returnData;
   }

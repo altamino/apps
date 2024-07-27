@@ -224,11 +224,11 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildSocialButton('assets/google_icon.svg'),
+        _buildSocialButton('../assets/google_icon.svg'),
         const SizedBox(width: 20),
-        _buildSocialButton('assets/facebook_icon.svg'),
+        _buildSocialButton('../assets/facebook_ico.svg'),
         const SizedBox(width: 20),
-        _buildSocialButton('assets/twitter_icon.svg'),
+        _buildSocialButton('../assets/twitter_icon.svg'),
       ],
     );
   }

@@ -23,10 +23,10 @@ class ChatState extends State<Chat> {
     List<Widget> messages = [];
 
     Client client = Client();
-    List<String> messagesText = await client.getMessages();
+    Map<String, List<String>> messagesText = await client.getMessages();
 
     for (int i = 0; i < messagesText.length; i++) {
-      messages.add(Text(messagesText[i]));
+      messages.add(Text('${messagesText.values.toList()[i][0]}: ${messagesText.values.toList()[i][1]}'));
     }
 
     return messages;
