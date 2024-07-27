@@ -11,6 +11,7 @@ class Chat extends StatefulWidget {
 class ChatState extends State<Chat> {
   late Future<List<Widget>> _messagesList;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _messageFieldController = TextEditingController();
 
   @override
   void initState() {
@@ -54,28 +55,40 @@ class ChatState extends State<Chat> {
                       );
                     } else {
                       List<Widget> texts = snapshot.data ?? [];
-                      return Column(
-                        children: texts
+                      return ListView.builder(
+                          itemCount: texts.length,
+                          controller: _scrollController,
+                          itemBuilder: (BuildContext context, int index) {
+                            return texts[index];
+                          }
                       );
                     }
                   },
                 )
             ),
+            TextField(
+              controller: _messageFieldController,
+              decoration: const InputDecoration(
+                hintText: 'Сообщение'
+              )
+            ),
             TextButton(
                 onPressed: () {
                   setState(() {
-                    // messages.add(['Сообщение', '1']);
+                    Client client = Client();
+                    client.sendMessage(_messageFieldController.text);
+                    _messagesList = _createMessages();
                   });
                   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
                 },
-                child: const Text('Добавить сообщение',
+                child: const Text('Отправить сообщение',
                     style: TextStyle(
                         fontSize: 22,
                         color: Colors.black
                     )
                 )
             )
-          ],
+          ]
         )
     );
   }

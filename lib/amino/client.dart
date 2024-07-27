@@ -205,4 +205,13 @@ class Client {
     return await get("/g/s-x$comId/community/info");
   }
 
+  Future<Map<String, dynamic>> sendMessage(String content) async {
+    Map<String, dynamic> data = {
+      'type': 0,
+      'content': content
+    };
+    Map<String, dynamic> responceData = await post("/g/s/chat/thread/$chatId/message", data: data);
+    return responceData;
+  }
+
 }
