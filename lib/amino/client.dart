@@ -1,4 +1,5 @@
 
+import 'package:convert/convert.dart';
 import 'package:dio/dio.dart';
 import 'core/generators.dart';
 import 'constants.dart';
@@ -123,11 +124,12 @@ class Client {
     return await post("/g/s/auth/request-security-validation", data: data);
   }
 
-  // Future<Map<String, dynamic>> createCommuniy() async {
+  /* TODO: Future<Map<String, dynamic>> createCommuniy() async {
     
-  // }
+  } */
 
   Future<Map<String, dynamic>> uploadMedia(String filePath) async {
+    // TODO: create upload
     File file = File(filePath);
     Uint8List data = await file.readAsBytes();
 
@@ -138,36 +140,44 @@ class Client {
   }
 
   Future<Map<String, dynamic>> subClients() async {
+    // TODO: create get communities function
     return await get("/g/s/community/joined", queryData: {"start": 0, "size": 100});
   }
 
-  Future<Map<String, dynamic>> getFromCode(String code) async {
-    return await get("/g/s/link-resolution", queryData: {"q": code});
+  Future<Map<String, dynamic>> getFromCode(String url) async {
+    return await get("/g/s/link-resolution", queryData: {"q": url});
   }
 
-  Future<Map<String, dynamic>> getChats({int start = 0, int size = 100}) async{
+  Future<Map<String, String>> getChats({int start = 0, int size = 100}) async{
     Map<String, dynamic> data = {
       "start": start,
       "size": size,
       "type": "joined-me"
     };
-    return await get("/g/s/chat/thread", queryData: data);
+    Map<String, dynamic> responceData = await get("/g/s/chat/thread", queryData: data);
+    List<dynamic> forData = responceData['threadList'];
+    Map<String, String> returnData = {};
+    for (int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['title']] = forData[i]['threadId'];
+    }
+    return returnData;
   }
 
   Future<Map<String, dynamic>> getUserInfo() async {
     return await get("/g/s/account");
   }
 
-  Future<Map<String, dynamic>> createChat(String title) async {
+  Future<Map<String, dynamic>> createChat(String title, {String? message, String? content}) async {
     Map<String, dynamic> data = {
       "title": title,
       "inviteeUids": [],
-      "initialMessageContent": 'Чат создане',
-      "content": null,
+      "initialMessageContent": message,
+      "content": content ?? 'Новый чат',
       "type": 2,
       "publishToGlobal": true
     };
-    return await post("/g/s/chat/thread", data: data);
+    Map<String, dynamic> responceData = await post("/g/s/chat/thread", data: data);
+    return responceData;
   }
 
   Future<Map<String, dynamic>> getChatMessages(String chatId, [int start = 0, int size = 100]) async {

@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin{
+  // TODO: create loading animation
   late AnimationController _controller;
   late Animation<double> _animation;
   final TextEditingController _emailController = TextEditingController();
@@ -293,6 +294,7 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
       await client.login(_emailController.text, _passwordController.text);
       _navigateToHome();
     } catch (e) {
+      debugPrint(e.toString());
       _showError('An error occurred during login');
     }
   }

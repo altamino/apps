@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:nulla_pc/ui/widgets/chat.dart';
+import 'package:nulla_pc/amino/client.dart';
 
 import 'list_decoration.dart';
-
-import '../../main.dart';
 
 class ChatsList extends StatefulWidget {
   const ChatsList({super.key});
@@ -13,49 +13,71 @@ class ChatsList extends StatefulWidget {
 }
 
 class ChatsListState extends State<ChatsList> {
-  final List<List<String>> _chats = account.getChats();
+  late Future<List<Widget>> _chatsList;
+
+  @override
+  void initState() {
+    super.initState();
+    _chatsList = _createButtons();
+  }
+
+  Future<List<Widget>> _createButtons() async {
+    List<Widget> chatsList = [];
+    Client client = Client();
+    Map<String, String> chats = await client.getChats();
+    debugPrint(chats.toString());
+
+    for (int i = 0; i < chats.length; i++) {
+      chatsList.add(
+        Row(
+          children: [
+            const ListDecoration(),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: TextButton(
+                style: ButtonStyle(
+                    alignment: Alignment.centerLeft,
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)
+                        )
+                    )
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Chat()
+                      )
+                  );
+                },
+                child: Text(chats.keys.toList()[i]),
+              ),
+            )
+          ]
+        )
+      );
+    }
+    return chatsList;
+  }
 
   @override
   Widget build(BuildContext context){
-    return ListView.builder(
-        itemCount: _chats.length,
-        itemBuilder: (BuildContext context, int index){
-          return Padding(
-              padding: const EdgeInsets.all(5),
-              child: TextButton(
-                  style: ButtonStyle(
-                      alignment: Alignment.centerLeft,
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)
-                          )
-                      )
-                  ),
-                  onPressed: () {
-                    account.currentChat = _chats[index];
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Chat()
-                        )
-                    );
-                  },
-                  child: Row(
-                      children: [
-                        const ListDecoration(),
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Text(_chats[index][0],
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22
-                              )
-                          ),
-                        )
-                      ]
-                  )
-              )
-          );
+    return FutureBuilder<List<Widget>>(
+        future: _chatsList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator()
+            );
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error loading chats'));
+          } else {
+            List<Widget> buttons = snapshot.data ?? [];
+            return Column(
+              children: buttons,
+            );
+          }
         }
     );
   }
