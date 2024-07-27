@@ -57,7 +57,7 @@ class Client {
     }
   }
 
-  dynamic login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     final Map<String, dynamic> data = {
       "email": email,
       "secret": "0 $password",
@@ -72,7 +72,7 @@ class Client {
     httpClient.options.headers["AUID"] = responseData["account"]["uid"];
     return responseData;
   }
-  dynamic verify(String email, String code) async {
+  Future<Map<String, dynamic>> verify(String email, String code) async {
     final Map<String, dynamic> data = {
       "validationContext": {
         "type": 1,
@@ -83,7 +83,7 @@ class Client {
     };
     return await post("/g/s/auth/check-security-validation", data: data);
   }
-  dynamic register(
+  Future<Map<String, dynamic>> register(
       String nickname, String email, String password, String verification) async {
     final Map<String, dynamic> data = {
       "secret": "0 $password",

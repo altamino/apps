@@ -18,6 +18,7 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _hidePassword = true;
   String _errorText = '';
 
   @override
@@ -61,6 +62,7 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
                     const SizedBox(height: 20),
                     _buildPasswordField(),
                     const SizedBox(height: 10),
+                    _buildShowPasswordButton(),
                     _buildForgotPassword(),
                     const SizedBox(height: 30),
                     _buildLoginButton(),
@@ -143,7 +145,7 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
       controller: _passwordController,
       hintText: 'Password',
       prefixIcon: Icons.lock_outline,
-      obscureText: true,
+      obscureText: _hidePassword,
     );
   }
 
@@ -178,7 +180,7 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () {
-          // Implement forgot password functionality
+          // TODO: Implement forgot password functionality
         },
         child: const Text(
           'Forgot Password?',
@@ -233,7 +235,7 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
   Widget _buildSocialButton(String assetName) {
     return InkWell(
       onTap: () {
-        // Implement social login
+        // TODO: Implement social login
       },
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -271,6 +273,17 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
     return Text(
       _errorText,
       style: const TextStyle(color: Color(0xFFFF3B5C), fontSize: 16),
+    );
+  }
+
+  Widget _buildShowPasswordButton() {
+    return TextButton(
+        onPressed: () {
+          setState(() {
+            _hidePassword = !_hidePassword;
+          });
+        },
+        child: const Text('Show password')
     );
   }
 
