@@ -1,5 +1,3 @@
-
-import 'package:convert/convert.dart';
 import 'package:dio/dio.dart';
 import 'core/generators.dart';
 import 'constants.dart';
@@ -14,6 +12,7 @@ class Client {
   final httpClient = Dio();
   String deviceId = genDeviceId();
   int comId = 0;
+  String chatId = '';
   static final Client _singleton = Client._();
 
   factory Client() {
@@ -32,6 +31,14 @@ class Client {
 
   int getComId() {
     return _singleton.comId;
+  }
+
+  void setChatId(String chatId) {
+    _singleton.chatId = chatId;
+  }
+
+  String getChatId() {
+    return _singleton.chatId;
   }
 
   Future<Map<String, dynamic>> post(String url,  {dynamic data, Map<String, dynamic>? headers}) async {
@@ -53,7 +60,8 @@ class Client {
           queryParameters: queryData
       );
       return response.data;
-    } catch(e) {
+    } catch (e) {
+      print(e.toString());
       return json.decode(e.toString());
     }
   }
@@ -180,21 +188,21 @@ class Client {
     return responceData;
   }
 
-  Future<Map<String, dynamic>> getChatMessages(String chatId, [int start = 0, int size = 100]) async {
-    final String com = comId as bool ? "/g" : "/x$comId";
-    return await get(
-      "$com/s/chat/thread/$chatId/message",
-      queryData: {"v": 2, "pagingType": "t", "start": start, "size": size}
+  Future<List<String>> getMessages([int start = 0, int size = 100]) async {
+    Map<String, dynamic> responceData = await get(
+        "/g/s/chat/thread/$chatId/message",
+        queryData: {'v': 2, "pagingType": "t", "start": start, "size": size}
     );
+    List<dynamic> forData = responceData['messageList'];
+    List<String> returnData = [];
+    for (int i = 0; i < forData.length; i++) {
+      returnData.add(forData[i]['content'] ?? '');
+    }
+    return returnData;
   }
 
   Future<Map<String, dynamic>> getComInfo(int comId) async {
     return await get("/g/s-x$comId/community/info");
-  }
-
-  Future<Map<String, dynamic>> getChatThreads([int start = 0, int size = 100]) async {
-    final String com = comId as bool ? "/g" : "/x$comId";
-    return await get("$com/s/chat/thread", queryData: {"type": "joined-me", "start": start, "size": size});
   }
 
 }

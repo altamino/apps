@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nulla_pc/amino/client.dart';
 
 class Chat extends StatefulWidget {
   const Chat({super.key});
@@ -8,10 +9,27 @@ class Chat extends StatefulWidget {
 }
 
 class ChatState extends State<Chat> {
+  late Future<List<Widget>> _messagesList;
   final ScrollController _scrollController = ScrollController();
-  
 
-  // List<List<String>> messages = account.getMessages();
+  @override
+  void initState() {
+    super.initState();
+    _messagesList = _createMessages();
+  }
+
+  Future<List<Widget>> _createMessages() async {
+    List<Widget> messages = [];
+
+    Client client = Client();
+    List<String> messagesText = await client.getMessages();
+
+    for (int i = 0; i < messagesText.length; i++) {
+      messages.add(Text(messagesText[i]));
+    }
+
+    return messages;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +41,24 @@ class ChatState extends State<Chat> {
         body: Column(
           children: [
             Expanded(
-                child:ListView.builder(
-                    controller: _scrollController,
-                    itemCount: 0,
-                    itemBuilder: (BuildContext context, int index) {
-                      return const Text("test",
-                        style: TextStyle(
-                            fontSize: 22
-                        ),
+                child: FutureBuilder<List<Widget>>(
+                  future: _messagesList,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator()
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                          child: Text('Error loading messages')
+                      );
+                    } else {
+                      List<Widget> texts = snapshot.data ?? [];
+                      return Column(
+                        children: texts
                       );
                     }
+                  },
                 )
             ),
             TextButton(

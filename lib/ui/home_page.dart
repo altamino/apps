@@ -24,7 +24,6 @@ class HomePageState extends State<HomePage> {
     Client client = Client();
     List<Widget> widgets = [];
     Map<String, dynamic> communityInformation = await client.subClients();
-    debugPrint(communityInformation.toString());
     for (int i = 0; i < communityInformation.length; i++) {
       widgets.add(
         IconButton(

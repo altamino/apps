@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:nulla_pc/ui/widgets/chat.dart';
 import 'package:nulla_pc/amino/client.dart';
 
@@ -25,7 +24,6 @@ class ChatsListState extends State<ChatsList> {
     List<Widget> chatsList = [];
     Client client = Client();
     Map<String, String> chats = await client.getChats();
-    debugPrint(chats.toString());
 
     for (int i = 0; i < chats.length; i++) {
       chatsList.add(
@@ -44,6 +42,7 @@ class ChatsListState extends State<ChatsList> {
                     )
                 ),
                 onPressed: () {
+                  client.chatId = chats.values.toList()[i];
                   Navigator.push(
                       context,
                       MaterialPageRoute(
