@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nulla_pc/ui/widgets/chat.dart';
+import 'package:nulla_pc/ui/chat_page.dart';
 import 'package:nulla_pc/amino/client.dart';
 
 import 'list_decoration.dart';

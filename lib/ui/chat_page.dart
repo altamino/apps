@@ -26,7 +26,19 @@ class ChatState extends State<Chat> {
     Map<String, List<String>> messagesText = await client.getMessages();
 
     for (int i = 0; i < messagesText.length; i++) {
-      messages.add(Text('${messagesText.values.toList()[i][0]}: ${messagesText.values.toList()[i][1]}'));
+      messages.add(
+          Row(
+            children: [
+              Text(messagesText.values.toList()[i][0]),
+              const VerticalDivider(
+                color: Colors.black,
+                width: 10,
+                thickness: 1,
+              ),
+              Text(messagesText.values.toList()[i][1])
+            ]
+          )
+      );
     }
 
     return messages;
@@ -73,11 +85,12 @@ class ChatState extends State<Chat> {
               )
             ),
             TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  Client client = Client();
+                  await client.sendMessage(_messageFieldController.text);
                   setState(() {
-                    Client client = Client();
-                    client.sendMessage(_messageFieldController.text);
                     _messagesList = _createMessages();
+                    _messageFieldController.text = '';
                   });
                   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
                 },
