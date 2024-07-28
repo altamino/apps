@@ -50,6 +50,7 @@ class Client {
       );
       return response.data;
     } catch(e) {
+      print(e.toString());
       return json.decode(e.toString());
     }
   }
@@ -179,8 +180,8 @@ class Client {
     Map<String, dynamic> data = {
       "title": title,
       "inviteeUids": [],
-      "initialMessageContent": message,
-      "content": content ?? 'Новый чат',
+      "initialMessageContent": message ?? 'Welcome',
+      "content": content ?? 'New chat',
       "type": 2,
       "publishToGlobal": true
     };

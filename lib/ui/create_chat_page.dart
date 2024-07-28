@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nulla_pc/amino/client.dart';
+import 'package:nulla_pc/ui/chat_page.dart';
 
 class CreateChatPage extends StatelessWidget{
   final TextEditingController _titleController = TextEditingController();
@@ -32,9 +34,17 @@ class CreateChatPage extends StatelessWidget{
             ),
             TextButton(
                 onPressed: () {
-                  // account.createChat(
-                  //     _titleController.text
-                  // );
+                  Client client = Client();
+                  client.createChat(
+                    _titleController.text
+                  );
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext content) {
+                      return const Chat();
+                    })
+                  );
                 },
                 child: const Text('Создать чат',
                     style: TextStyle(

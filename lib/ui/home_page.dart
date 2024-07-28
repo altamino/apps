@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nulla_pc/amino/client.dart';
+import 'package:nulla_pc/ui/create_chat_page.dart';
 
 import 'widgets/side_menu.dart';
 import 'widgets/chats_list.dart';
@@ -44,6 +45,21 @@ class HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Nulla'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return CreateChatPage();
+                          }
+                      )
+                  );
+                },
+                icon: const Icon(Icons.add)
+            )
+          ],
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Посты'),
