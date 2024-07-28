@@ -4,6 +4,7 @@ import 'package:nulla_pc/ui/create_chat_page.dart';
 
 import 'widgets/side_menu.dart';
 import 'widgets/chats_list.dart';
+import 'widgets/search.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,7 +42,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Nulla'),
@@ -58,12 +59,13 @@ class HomePageState extends State<HomePage> {
                   );
                 },
                 icon: const Icon(Icons.add)
-            )
+            ),
           ],
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Посты'),
               Tab(text: 'Чаты'),
+              Tab(text: 'Поиск')
             ],
           ),
         ),
@@ -89,6 +91,7 @@ class HomePageState extends State<HomePage> {
                   children: [
                     Center(child: Text('Посты')),
                     ChatsList(),
+                    Search()
                   ],
                 ),
               );

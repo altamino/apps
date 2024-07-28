@@ -215,4 +215,23 @@ class Client {
     return responceData;
   }
 
+  Future<Map<String, String>> searchChats(String query) async {
+    Map<String, dynamic> responceData = await get(
+        "/g/s/chat/thread/explore/search",
+        queryData: {
+          'q': query
+        }
+    );
+
+    List<dynamic> forData = responceData['threadListWrapper']['threadList'];
+    Map<String, String> returnData = {};
+    for(int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['threadId']] = forData[i]['title'];
+    }
+
+
+    print(returnData);
+    return returnData;
+  }
+
 }

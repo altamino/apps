@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nulla_pc/amino/client.dart';
+import 'package:nulla_pc/ui/edit_chat_page.dart';
 
 class Chat extends StatefulWidget {
   const Chat({super.key});
@@ -49,7 +50,22 @@ class ChatState extends State<Chat> {
     return Scaffold(
         appBar: AppBar(
           // title: Text(account.currentChat[0]),
-          title: const Text("test")
+          title: const Text("test"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) {
+                            return EditChatPage();
+                          }
+                      )
+                  );
+                },
+                icon: const Icon(Icons.edit)
+            )
+          ],
         ),
         body: Column(
           children: [
