@@ -11,6 +11,7 @@ class Chat extends StatefulWidget {
 
 class ChatState extends State<Chat> {
   late Future<List<Widget>> _messagesList;
+  late Future<bool> _isEntered;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageFieldController = TextEditingController();
 
@@ -18,6 +19,7 @@ class ChatState extends State<Chat> {
   void initState() {
     super.initState();
     _messagesList = _createMessages();
+    _isEntered = _checkEnterStatus();
   }
 
   Future<List<Widget>> _createMessages() async {
@@ -45,6 +47,13 @@ class ChatState extends State<Chat> {
     return messages;
   }
 
+  Future<bool> _checkEnterStatus() async {
+    bool isEntered = false;
+    Client client = Client();
+
+    return isEntered;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,58 +76,87 @@ class ChatState extends State<Chat> {
             )
           ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-                child: FutureBuilder<List<Widget>>(
-                  future: _messagesList,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                          child: CircularProgressIndicator()
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Center(
-                          child: Text('Error loading messages')
-                      );
-                    } else {
-                      List<Widget> texts = snapshot.data ?? [];
-                      return ListView.builder(
-                          itemCount: texts.length,
-                          controller: _scrollController,
-                          itemBuilder: (BuildContext context, int index) {
-                            return texts[index];
-                          }
-                      );
-                    }
-                  },
-                )
-            ),
-            TextField(
-              controller: _messageFieldController,
-              decoration: const InputDecoration(
-                hintText: 'Сообщение'
-              )
-            ),
-            TextButton(
-                onPressed: () async {
-                  Client client = Client();
-                  await client.sendMessage(_messageFieldController.text);
-                  setState(() {
-                    _messagesList = _createMessages();
-                    _messageFieldController.text = '';
-                  });
-                  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                },
-                child: const Text('Отправить сообщение',
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.black
-                    )
-                )
-            )
-          ]
+        body: FutureBuilder<bool>(
+          future: _isEntered,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator()
+              );
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text('Error loading messages')
+              );
+            } else {
+              bool isEntered = snapshot.data ?? false;
+              return  Column(
+                  children: [
+                    Expanded(
+                        child: FutureBuilder<List<Widget>>(
+                          future: _messagesList,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator()
+                              );
+                            } else if (snapshot.hasError) {
+                              return const Center(
+                                  child: Text('Error loading messages')
+                              );
+                            } else {
+                              List<Widget> texts = snapshot.data ?? [];
+                              return ListView.builder(
+                                  itemCount: texts.length,
+                                  controller: _scrollController,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return texts[index];
+                                  }
+                              );
+                            }
+                          },
+                        )
+                    ),
+                    if (isEntered)
+                      Row(
+                        children: [
+                          Expanded(
+                              child: TextField(
+                                  controller: _messageFieldController,
+                                  decoration: const InputDecoration(
+                                      hintText: 'Сообщение'
+                                  )
+                              )
+                          ),
+                          TextButton(
+                              onPressed: () async {
+                                Client client = Client();
+                                await client.sendMessage(_messageFieldController.text);
+                                setState(() {
+                                  _messagesList = _createMessages();
+                                  _messageFieldController.text = '';
+                                });
+                                _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                              },
+                              child: const Text('Отправить сообщение',
+                                  style: TextStyle(
+                                      fontSize: 22,
+                                      color: Colors.black
+                                  )
+                              )
+                          )
+                        ]
+                      )
+
+                    else
+                      const Center(
+                        child: Text('123')
+                      )
+                  ]
+              );
+            }
+          },
         )
+
     );
   }
 }
