@@ -19,7 +19,7 @@ class SearchState extends State<Search> {
     Client client = Client();
     Map<String, String> response = await client.searchChats(_searchController.text);
 
-    for(int i = 0; i < result.length; i++) {
+    for(int i = 0; i < response.length; i++) {
       result.add(
         TextButton(
             onPressed: () {

@@ -228,9 +228,6 @@ class Client {
     for(int i = 0; i < forData.length; i++) {
       returnData[forData[i]['threadId']] = forData[i]['title'];
     }
-
-
-    print(returnData);
     return returnData;
   }
 
