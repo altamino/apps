@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dio/dio.dart';
 import 'core/generators.dart';
 import 'constants.dart';
@@ -14,6 +12,8 @@ class Client {
   final httpClient = Dio();
   String deviceId = genDeviceId();
   int comId = 0;
+  String chatId = '';
+  String userId = '';
   static final Client _singleton = Client._();
 
   factory Client() {
@@ -34,18 +34,24 @@ class Client {
     return _singleton.comId;
   }
 
+  void setChatId(String chatId) {
+    _singleton.chatId = chatId;
+  }
+
+  String getChatId() {
+    return _singleton.chatId;
+  }
+
   Future<Map<String, dynamic>> post(String url,  {dynamic data, Map<String, dynamic>? headers}) async {
-    print('42');
     try {
-      print('43');
       final response = await httpClient.post(
           url,
           data: data,
           options: Options(headers: headers)
       );
-      print('44');
       return response.data;
     } catch(e) {
+      print(e.toString());
       return json.decode(e.toString());
     }
   }
@@ -56,7 +62,8 @@ class Client {
           queryParameters: queryData
       );
       return response.data;
-    } catch(e) {
+    } catch (e) {
+      print(e.toString());
       return json.decode(e.toString());
     }
   }
@@ -74,6 +81,9 @@ class Client {
 
     httpClient.options.headers["NDCAUTH"] = "sid=${responseData["sid"]}";
     httpClient.options.headers["AUID"] = responseData["account"]["uid"];
+
+    userId = responseData["account"]["uid"];
+
     return responseData;
   }
   Future<Map<String, dynamic>> verify(String email, String code) async {
@@ -110,8 +120,11 @@ class Client {
       "type": 1,
       "identity": email
     };
-
-    return await post("/g/s/auth/register", data: data);
+    
+    final response = await post("/g/s/auth/register", data:data);
+    httpClient.options.headers["NDCAUTH"] = "sid=${response["sid"]}";
+    httpClient.options.headers["AUID"] = response["account"]["uid"];
+    return response;
   }
 
   Future<Map<String, dynamic>> getValidationCode(String email) async {
@@ -120,57 +133,131 @@ class Client {
       "type": 1,
       "identity": email
     };
-
-    return post("/g/s/auth/request-security-validation", data: data);
+    
+    return await post("/g/s/auth/request-security-validation", data: data);
   }
 
-  Future<Map<String, dynamic>> createCommuniy() async {
-    return {};
-  }
+  /* TODO: Future<Map<String, dynamic>> createCommuniy() async {
+    
+  } */
 
   Future<Map<String, dynamic>> uploadMedia(String filePath) async {
+    // TODO: create upload
     File file = File(filePath);
     Uint8List data = await file.readAsBytes();
 
     Digest fileHash = sha1.convert(data);
     String mimeType = lookupMimeType(filePath) ?? 'image/jpeg';
 
-    return await post("/g/s/media/upload", data: data,
-        headers: {'Content-Type': mimeType}
-    );
+    return await post("/g/s/media/upload");
   }
 
-  Future<Map<String, dynamic>> subClients(
-      [int start = 0, int size = 100]) async {
-    return await get("/g/s/community/joined", queryData: {"start": start, "size": size});
+  Future<Map<String, dynamic>> subClients() async {
+    // TODO: create get communities function
+    return await get("/g/s/community/joined", queryData: {"start": 0, "size": 100});
   }
 
-  Future<Map<String, dynamic>> getFromCode(String code) async {
-    return await get("/g/s/link-resolution", queryData: {"q": code});
+  Future<Map<String, dynamic>> getFromCode(String url) async {
+    return await get("/g/s/link-resolution", queryData: {"q": url});
   }
 
-  Future<Map<String, dynamic>> getChats({int start = 0, int size = 100}) async{
+  Future<Map<String, String>> getChats({int start = 0, int size = 100}) async{
     Map<String, dynamic> data = {
       "start": start,
       "size": size,
       "type": "joined-me"
     };
-    return await get("/g/s/chat/thread", queryData: data);
+    Map<String, dynamic> responceData = await get("/g/s/chat/thread", queryData: data);
+    List<dynamic> forData = responceData['threadList'];
+    Map<String, String> returnData = {};
+    for (int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['title']] = forData[i]['threadId'];
+    }
+    return returnData;
   }
 
   Future<Map<String, dynamic>> getUserInfo() async {
     return await get("/g/s/account");
   }
 
-  Future<Map<String, dynamic>> createChat(String title) async {
+  Future<Map<String, dynamic>> createChat(String title, {String? message, String? content}) async {
     Map<String, dynamic> data = {
       "title": title,
       "inviteeUids": [],
-      "initialMessageContent": 'Чат создане',
-      "content": null,
-      "type": 2,
+      "initialMessageContent": message ?? 'Welcome',
+      "content": content ?? 'New chat',
+      "type": 0,
       "publishToGlobal": true
     };
-    return await post("/g/s/chat/thread", data: data);
+    Map<String, dynamic> responceData = await post("/g/s/chat/thread", data: data);
+    return responceData;
+  }
+
+  Future<Map<String, List<String>>> getMessages([int start = 0, int size = 100]) async {
+    Map<String, dynamic> responceData = await get(
+        "/g/s/chat/thread/$chatId/message",
+        queryData: {'v': 2, "pagingType": "t", "start": start, "size": size}
+    );
+    List<dynamic> forData = responceData['messageList'];
+    Map<String, List<String>> returnData = {};
+    for (int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['messageId']] = [forData[i]['author']['nickname'], forData[i]['content'] ?? ''];
+    }
+    return returnData;
+  }
+
+  Future<Map<String, dynamic>> getComInfo(int comId) async {
+    return await get("/g/s-x$comId/community/info");
+  }
+
+  Future<Map<String, dynamic>> sendMessage(String content) async {
+    Map<String, dynamic> data = {
+      'type': 0,
+      'content': content
+    };
+    Map<String, dynamic> responceData = await post("/g/s/chat/thread/$chatId/message", data: data);
+    return responceData;
+  }
+
+  Future<Map<String, String>> searchChats(String query) async {
+    Map<String, dynamic> responceData = await get(
+        "/g/s/chat/thread/explore/search",
+        queryData: {
+          'q': query
+        }
+    );
+
+    List<dynamic> forData = responceData['threadListWrapper']['threadList'];
+    Map<String, String> returnData = {};
+    for(int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['threadId']] = forData[i]['title'];
+    }
+    return returnData;
+  }
+
+  Future<Map<String, String>> getChatUsers([int start = 0, int size = 100]) async {
+    Map<String, dynamic> queryData = {
+      "start": start,
+      "size": size,
+      "type": "default",
+      "cv": "1.2"
+    };
+
+    Map<String, dynamic> responceData = await get("/g/s/chat/thread/$chatId/member", queryData: queryData);
+
+    Map<String, String> returnData = {};
+    List<dynamic> forData = responceData['memberList'];
+    for (int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['uid']] = forData[i]['nickname'];
+    }
+
+    return returnData;
+  }
+
+  Future<Map<String, dynamic>> joinChat() async {
+    print(userId);
+    print(httpClient.options.headers["AUID"]);
+    Map<String, dynamic> responceData = await post("/g/s/chat/thread/$chatId/member/$userId");
+    return responceData;
   }
 }

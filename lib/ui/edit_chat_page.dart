@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:nulla_pc/amino/client.dart';
 import 'package:nulla_pc/ui/chat_page.dart';
 
-class CreateChatPage extends StatelessWidget{
+class EditChatPage extends StatelessWidget{
   final TextEditingController _titleController = TextEditingController();
 
-  CreateChatPage({super.key});
+  EditChatPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Создание чата'),
+        title: const Text('Редактирование чата'),
       ),
       body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -34,7 +34,7 @@ class CreateChatPage extends StatelessWidget{
             ),
             TextButton(
                 onPressed: () {
-                  Client client = Client();
+                  /*Client client = Client();
                   client.createChat(
                     _titleController.text
                   );
@@ -44,9 +44,9 @@ class CreateChatPage extends StatelessWidget{
                     MaterialPageRoute(builder: (BuildContext content) {
                       return const Chat();
                     })
-                  );
+                  );*/
                 },
-                child: const Text('Создать чат',
+                child: const Text('Применить изменения',
                     style: TextStyle(
                         fontSize: 22,
                         color: Colors.black
