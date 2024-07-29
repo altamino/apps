@@ -48,10 +48,13 @@ class ChatState extends State<Chat> {
   }
 
   Future<bool> _checkEnterStatus() async {
-    bool isEntered = false;
     Client client = Client();
-
-    return isEntered;
+    Map<String, String> users = await client.getChatUsers();
+    if (users.keys.contains(client.userId)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -148,8 +151,23 @@ class ChatState extends State<Chat> {
                       )
 
                     else
-                      const Center(
-                        child: Text('123')
+                      TextButton(
+                          onPressed: () async {
+                            Client client = Client();
+                            await client.joinChat();
+                            setState(() {
+                              _messagesList = _createMessages();
+                              _messageFieldController.text = '';
+                              _isEntered = _checkEnterStatus();
+                            });
+                            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                          },
+                          child: const Text('Вступить в чат',
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.black
+                              )
+                          )
                       )
                   ]
               );

@@ -13,6 +13,7 @@ class Client {
   String deviceId = genDeviceId();
   int comId = 0;
   String chatId = '';
+  String userId = '';
   static final Client _singleton = Client._();
 
   factory Client() {
@@ -80,6 +81,9 @@ class Client {
 
     httpClient.options.headers["NDCAUTH"] = "sid=${responseData["sid"]}";
     httpClient.options.headers["AUID"] = responseData["account"]["uid"];
+
+    userId = responseData["account"]["uid"];
+
     return responseData;
   }
   Future<Map<String, dynamic>> verify(String email, String code) async {
@@ -182,7 +186,7 @@ class Client {
       "inviteeUids": [],
       "initialMessageContent": message ?? 'Welcome',
       "content": content ?? 'New chat',
-      "type": 2,
+      "type": 0,
       "publishToGlobal": true
     };
     Map<String, dynamic> responceData = await post("/g/s/chat/thread", data: data);
@@ -229,5 +233,31 @@ class Client {
       returnData[forData[i]['threadId']] = forData[i]['title'];
     }
     return returnData;
+  }
+
+  Future<Map<String, String>> getChatUsers([int start = 0, int size = 100]) async {
+    Map<String, dynamic> queryData = {
+      "start": start,
+      "size": size,
+      "type": "default",
+      "cv": "1.2"
+    };
+
+    Map<String, dynamic> responceData = await get("/g/s/chat/thread/$chatId/member", queryData: queryData);
+
+    Map<String, String> returnData = {};
+    List<dynamic> forData = responceData['memberList'];
+    for (int i = 0; i < forData.length; i++) {
+      returnData[forData[i]['uid']] = forData[i]['nickname'];
+    }
+
+    return returnData;
+  }
+
+  Future<Map<String, dynamic>> joinChat() async {
+    print(userId);
+    print(httpClient.options.headers["AUID"]);
+    Map<String, dynamic> responceData = await post("/g/s/chat/thread/$chatId/member/$userId");
+    return responceData;
   }
 }
