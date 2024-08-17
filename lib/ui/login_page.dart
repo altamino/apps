@@ -289,13 +289,13 @@ class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixi
   }
 
   void _handleLogin() async {
-    try {
-      Client client = Client();
-      await client.login(_emailController.text, _passwordController.text);
+    Client client = Client();
+    String status = await client.login(_emailController.text, _passwordController.text);
+    if (status == 'OK') {
       _navigateToHome();
-    } catch (e) {
-      debugPrint(e.toString());
-      _showError('An error occurred during login');
+    } else {
+      debugPrint(status);
+      _showError(status);
     }
   }
 

@@ -52,7 +52,14 @@ class Client {
       return response.data;
     } catch(e) {
       print(e.toString());
-      return json.decode(e.toString());
+      print('separator');
+      try {
+        return json.decode(e.toString());
+      } on FormatException {
+        return {'error': 'Empty responce from server'};
+      } catch (e) {
+        return {'error': e.toString()};
+      }
     }
   }
   Future<Map<String, dynamic>> get(String url, {Map<String, dynamic>? queryData, Map<String, dynamic>? headers}) async {
@@ -62,13 +69,20 @@ class Client {
           queryParameters: queryData
       );
       return response.data;
-    } catch (e) {
-      print(e.toString());
-      return json.decode(e.toString());
+    } catch (error1) {
+      print(error1.toString());
+      print('separator');
+      try {
+        return json.decode(error1.toString());
+      } on FormatException {
+        return {'error': 'Empty responce from server'};
+      } catch (error2) {
+        return {'error': error2.toString()};
+      }
     }
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<String> login(String email, String password) async {
     final Map<String, dynamic> data = {
       "email": email,
       "secret": "0 $password",
@@ -79,12 +93,16 @@ class Client {
 
     final responseData = await post("/g/s/auth/login", data: data);
 
+    if (responseData['error'] != null) {
+      return responseData['error'];
+    }
+
     httpClient.options.headers["NDCAUTH"] = "sid=${responseData["sid"]}";
     httpClient.options.headers["AUID"] = responseData["account"]["uid"];
 
     userId = responseData["account"]["uid"];
 
-    return responseData;
+    return 'OK';
   }
   Future<Map<String, dynamic>> verify(String email, String code) async {
     final Map<String, dynamic> data = {
