@@ -12,4 +12,4 @@ Apple devices:
 - if using sideloading: iOS 14.0 and higher.
 
 Android:
-- 6.0+, armeabi-v7a support (check this using Aida64 for Android).
+- 7.0+, armeabi-v7a or arm64-v8a support (check this using Aida64 for Android).
